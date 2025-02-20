@@ -8,28 +8,40 @@ import {
 } from "firebase/auth";
 import React, { createContext, useEffect, useState } from "react";
 import auth from "../Firebase/firebase.config";
+import useAxiosPublic from "../hooks/useAxiosPublic";
 
 export const AuthContext = createContext();
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loader, setLoader] = useState(true);
-
+  const axiosPublic = useAxiosPublic();
   const provider = new GoogleAuthProvider();
 
   useEffect(() => {
-    const unSubscribe = onAuthStateChanged(auth, (currentUser) => {
+    const unSubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
-        const userInfo = { email: currentUser.email };
-        setUser(currentUser);
-        console.log(currentUser);
-        setLoader(false);
+        try {
+          const userInfo = { email: currentUser.email };
+
+          const { data } = await axiosPublic.post("/jwt", userInfo);
+
+          if (data.token) {
+            localStorage.setItem("token", data.token);
+            setLoader(false);
+          }
+        } catch (error) {
+          alert(error);
+          localStorage.removeItem("token");
+          setLoader(false);
+        }
       } else {
+        localStorage.removeItem("token");
         setLoader(false);
       }
     });
 
     return () => unSubscribe();
-  }, []);
+  }, [axiosPublic]);
 
   //   Register
   const registerUser = (email, password) => {
