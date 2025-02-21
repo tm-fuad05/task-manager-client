@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-// In your actual project, you would import the Google icon like this:
-import { FcGoogle } from "react-icons/fc";
+
 import GoogleButton from "../../components/Shared/GoogleButton";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
