@@ -11,7 +11,6 @@ const Navbar = () => {
   const { signOutUser, user } = useAuth();
   console.log(user);
   const { pathname } = useLocation();
-  const navigate = useNavigate();
 
   const handleSignOut = () => {
     signOutUser()

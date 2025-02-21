@@ -4,12 +4,17 @@ import Home from "../pages/Home";
 import Login from "../pages/Auth/Login";
 import Register from "../pages/Auth/Register";
 import PrivateLayout from "../layouts/PrivateLayout";
-import Footer from "../components/Shared/Footer";
+import ScrollToUp from "./ScrollToUp";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Root />,
+    element: (
+      <>
+        <ScrollToUp />
+        <Root />
+      </>
+    ),
     errorElement: <div>404</div>,
     children: [
       {
