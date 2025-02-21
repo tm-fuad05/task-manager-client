@@ -50,7 +50,7 @@ const AuthProvider = ({ children }) => {
     setLoader(true);
     return createUserWithEmailAndPassword(auth, email, password);
   };
-
+  //  profile update
   const updateUserProfile = (profile) => {
     return updateProfile(auth.currentUser, profile);
   };

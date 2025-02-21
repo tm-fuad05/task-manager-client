@@ -10,7 +10,7 @@ const Root = () => {
     <div>
       <Navbar />
       <Outlet />
-      {pathname === "/" && <Footer />}
+      {/* {pathname === "/" && <Footer />} */}
     </div>
   );
 };

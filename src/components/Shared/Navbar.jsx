@@ -2,10 +2,11 @@ import React, { useState } from "react";
 import { FiLogOut, FiPlus } from "react-icons/fi";
 import { HiDotsVertical } from "react-icons/hi";
 
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 import Swal from "sweetalert2/dist/sweetalert2.js";
 import "sweetalert2/src/sweetalert2.scss";
+import AddTaskForm from "../Home-Components/AddTaskForm";
 
 const Navbar = () => {
   const { signOutUser, user } = useAuth();
@@ -26,8 +27,8 @@ const Navbar = () => {
   };
 
   return (
-    <div>
-      <div className="px-6 md:px-8 lg:px-12 navbar bg-base-100 shadow-sm">
+    <div className="relative">
+      <div className="px-6 md:px-8 lg:px-12 navbar bg-base-100 shadow-sm sticky top-0">
         <div className="flex-1">
           <a href="/" className="text-2xl md:text-3xl font-bold">
             <span className="text-main">Task</span>Nest
@@ -38,9 +39,17 @@ const Navbar = () => {
           {pathname === "/" ? (
             <div className="flex gap-2">
               <div className="flex-none">
-                <button className="btn btn-ghost bg-main text-white">
+                <button
+                  onClick={() => document.getElementById("modal").showModal()}
+                  className="btn btn-ghost bg-main text-white"
+                >
                   <FiPlus /> Add Task
                 </button>
+                <dialog id="modal" className="modal">
+                  <AddTaskForm
+                    onClose={() => document.getElementById("modal").close()}
+                  />
+                </dialog>
               </div>
               <button
                 className="btn"
