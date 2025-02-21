@@ -19,7 +19,7 @@ const Login = () => {
     const email = form.email.value;
     const password = form.password.value;
 
-    setError("");
+    setError(" ");
 
     try {
       const result = await signInUser(email, password);
