@@ -1,10 +1,64 @@
-import React from "react";
+import React, { useState } from "react";
 import GoogleButton from "../../components/Shared/GoogleButton";
-import { Link } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
+import useAuth from "../../hooks/useAuth";
+import useAxiosPublic from "../../hooks/useAxiosPublic";
+import { toast } from "react-toastify";
 // In your actual project, import the Google icon:
 // import { FcGoogle } from 'react-icons/fc';
 
 const Register = () => {
+  const { registerUser, updateUserProfile, signOutUser, user } = useAuth();
+  const axiosPublic = useAxiosPublic();
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
+
+  const handleRegister = async (e) => {
+    e.preventDefault();
+
+    const form = e.target;
+    const firstName = form.firstName.value;
+    const lastName = form.lastName.value;
+    const email = form.email.value;
+    const password = form.password.value;
+
+    setError("");
+    const strongPass =
+      /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?])[A-Za-z\d!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]{8,}$/;
+
+    if (!strongPass.test(password)) {
+      setError("Your password is not enough strong.Try again!");
+      return;
+    }
+
+    try {
+      const result = await registerUser(email, password);
+
+      await updateUserProfile({
+        displayName: firstName + " " + lastName,
+      });
+
+      const userInfo = {
+        name: firstName + " " + lastName,
+        email: email,
+        uid: result.user?.uid,
+      };
+      const { data } = await axiosPublic.post("/users", userInfo);
+      if (data.success) {
+        toast.success("Successfully registered");
+      }
+      await signOutUser();
+      navigate("/login");
+    } catch (error) {
+      console.error(error);
+      setError(error.message || "Something went wrong! Please try again.");
+    }
+  };
+
+  if (user) {
+    return <Navigate to={"/"} />;
+  }
+
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-gray-100">
       <div className="w-full max-w-xl p-6">
@@ -20,7 +74,7 @@ const Register = () => {
           </div>
 
           {/* Form */}
-          <form className="space-y-6">
+          <form onSubmit={handleRegister} className="space-y-6">
             {/* Full Name */}
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
@@ -29,6 +83,7 @@ const Register = () => {
                 </label>
                 <input
                   type="text"
+                  name="firstName"
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-main focus:outline-none"
                   placeholder="John"
                 />
@@ -39,6 +94,7 @@ const Register = () => {
                 </label>
                 <input
                   type="text"
+                  name="lastName"
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-main focus:outline-none"
                   placeholder="Doe"
                 />
@@ -52,6 +108,7 @@ const Register = () => {
               </label>
               <input
                 type="email"
+                name="email"
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-main focus:outline-none"
                 placeholder="your@email.com"
               />
@@ -64,12 +121,11 @@ const Register = () => {
               </label>
               <input
                 type="password"
+                name="password"
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-main focus:outline-none"
                 placeholder="••••••••"
               />
-              <p className="text-xs text-gray-500">
-                Must be at least 8 characters long
-              </p>
+              {error && <p className="text-xs text-red-500">{error}</p>}
             </div>
 
             {/* Terms and Conditions */}

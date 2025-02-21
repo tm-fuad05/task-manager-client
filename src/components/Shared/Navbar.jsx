@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { FiLogOut, FiPlus } from "react-icons/fi";
 import { HiDotsVertical } from "react-icons/hi";
 
@@ -22,7 +22,6 @@ const Navbar = () => {
           timer: 1500,
           showConfirmButton: false,
         });
-        navigate("/login");
       })
       .catch(() => {});
   };
@@ -35,49 +34,59 @@ const Navbar = () => {
             <span className="text-main">Task</span>Nest
           </a>
         </div>
-        {pathname === "/" ? (
-          <div className="flex gap-2">
+
+        <div>
+          {pathname === "/" ? (
+            <div className="flex gap-2">
+              <div className="flex-none">
+                <button className="btn btn-ghost bg-main text-white">
+                  <FiPlus /> Add Task
+                </button>
+              </div>
+              <button
+                className="btn"
+                popoverTarget="popover-1"
+                style={
+                  { anchorName: "--anchor-1" } /* as React.CSSProperties */
+                }
+              >
+                <HiDotsVertical />
+              </button>
+
+              <ul
+                className="dropdown dropdown-end menu w-52 rounded-box bg-base-100 shadow-sm"
+                popover="auto"
+                id="popover-1"
+                style={
+                  {
+                    positionAnchor: "--anchor-1",
+                  } /* as React.CSSProperties */
+                }
+              >
+                <li className="my-2 font-semibold pl-2 pb-1 border-b border-gray-200">
+                  {user?.displayName}
+                </li>
+                <li>
+                  <a className="text-red-500" onClick={handleSignOut}>
+                    <FiLogOut /> Log Out
+                  </a>
+                </li>
+              </ul>
+            </div>
+          ) : pathname === "/login" ? (
             <div className="flex-none">
               <button className="btn btn-ghost bg-main text-white">
-                <FiPlus /> Add Task
+                <Link to={"/register"}>Sign Up</Link>
               </button>
             </div>
-            <button
-              className="btn"
-              popoverTarget="popover-1"
-              style={{ anchorName: "--anchor-1" } /* as React.CSSProperties */}
-            >
-              <HiDotsVertical />
-            </button>
-
-            <ul
-              className="dropdown dropdown-end menu w-52 rounded-box bg-base-100 shadow-sm"
-              popover="auto"
-              id="popover-1"
-              style={
-                { positionAnchor: "--anchor-1" } /* as React.CSSProperties */
-              }
-            >
-              <li>
-                <a className="text-red-500" onClick={handleSignOut}>
-                  <FiLogOut /> Log Out
-                </a>
-              </li>
-            </ul>
-          </div>
-        ) : pathname === "/login" ? (
-          <div className="flex-none">
-            <button className="btn btn-ghost bg-main text-white">
-              <Link to={"/register"}>Sign Up</Link>
-            </button>
-          </div>
-        ) : (
-          <div className="flex-none">
-            <button className="btn btn-ghost bg-main text-white">
-              <Link to={"/login"}>Sign in</Link>
-            </button>
-          </div>
-        )}
+          ) : (
+            <div className="flex-none">
+              <button className="btn btn-ghost bg-main text-white">
+                <Link to={"/login"}>Sign in</Link>
+              </button>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

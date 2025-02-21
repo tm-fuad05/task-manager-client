@@ -4,15 +4,20 @@ import { useNavigate } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
 import Swal from "sweetalert2/dist/sweetalert2.js";
 import "sweetalert2/src/sweetalert2.scss";
+import useAxiosPublic from "../../hooks/useAxiosPublic";
 
 const GoogleButton = () => {
   const { googleSignIn, setUser } = useAuth();
+  const axiosPublic = useAxiosPublic();
   const navigate = useNavigate();
   const handleGoogleSignIn = async () => {
     try {
       const result = await googleSignIn();
 
-      if (!result.user) alert("Google sign in failed");
+      if (!result.user) {
+        alert("Google sign in failed");
+        return;
+      }
 
       const userInfo = {
         name: result.user?.displayName,
@@ -20,16 +25,21 @@ const GoogleButton = () => {
         uid: result.user?.uid,
       };
 
-      setUser(result.user);
+      const { data } = await axiosPublic.post("/users", userInfo);
+
+      if (data.success) {
+        navigate("/");
+      }
       Swal.fire({
         title: "Successfully signed in",
         icon: "success",
         timer: 1500,
         showConfirmButton: false,
       });
+      setUser(result.user);
       navigate("/");
     } catch (error) {
-      alert("Google sign in failed");
+      console.log(error);
     }
   };
 

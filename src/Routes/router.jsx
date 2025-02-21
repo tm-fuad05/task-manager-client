@@ -4,6 +4,7 @@ import Home from "../pages/Home";
 import Login from "../pages/Auth/Login";
 import Register from "../pages/Auth/Register";
 import PrivateLayout from "../layouts/PrivateLayout";
+import Footer from "../components/Shared/Footer";
 
 const router = createBrowserRouter([
   {
@@ -15,10 +16,11 @@ const router = createBrowserRouter([
         path: "/",
         element: (
           <PrivateLayout>
-            <Home />,
+            <Home />
           </PrivateLayout>
         ),
       },
+
       {
         path: "/login",
         element: <Login />,

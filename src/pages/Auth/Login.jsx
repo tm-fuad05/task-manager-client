@@ -1,10 +1,44 @@
-import React from "react";
+import React, { useState } from "react";
 // In your actual project, you would import the Google icon like this:
 import { FcGoogle } from "react-icons/fc";
 import GoogleButton from "../../components/Shared/GoogleButton";
-import { Link } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
+import useAuth from "../../hooks/useAuth";
+import { toast } from "react-toastify";
 
 const Login = () => {
+  const [error, setError] = useState("");
+  const { signInUser, setUser, user } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+
+    const form = e.target;
+
+    const email = form.email.value;
+    const password = form.password.value;
+
+    setError("");
+
+    try {
+      const result = await signInUser(email, password);
+
+      // Successfully signed in
+      toast.success("Successfully signed in");
+      setUser(result.user);
+      navigate("/");
+    } catch (error) {
+      console.error("Login error:", error);
+
+      setError("Invalid email or password. Try again!");
+    }
+  };
+
+  if (user) {
+    return <Navigate to={"/"} />;
+  }
+
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-gray-100">
       <div className="w-full max-w-md p-6">
@@ -24,7 +58,7 @@ const Login = () => {
           </div>
 
           {/* Form */}
-          <form className="space-y-6">
+          <form onSubmit={handleLogin} className="space-y-6">
             {/* Email Input */}
             <div className="space-y-2">
               <label className="block text-sm font-medium text-gray-700">
@@ -33,6 +67,7 @@ const Login = () => {
               <div className="relative">
                 <input
                   type="email"
+                  name="email"
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-main  focus:outline-none"
                   placeholder="Enter your email"
                 />
@@ -47,10 +82,12 @@ const Login = () => {
               <div className="relative">
                 <input
                   type="password"
+                  name="password"
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-main  focus:outline-none"
                   placeholder="••••••••"
                 />
               </div>
+              {error && <p className="text-sm text-red-500">{error}</p>}
             </div>
 
             {/* Login Button */}

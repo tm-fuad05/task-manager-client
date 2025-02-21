@@ -10,7 +10,7 @@ const PrivateLayout = ({ children }) => {
   }
 
   if (user) return children;
-  return <Navigate to={"/login"}></Navigate>;
+  return <Navigate to={"/login"} />;
 };
 
 export default PrivateLayout;
