@@ -1,15 +1,36 @@
 import React from "react";
 import useTasks from "../../hooks/useTasks";
-import { FiPlus } from "react-icons/fi";
-import AddTaskForm from "./AddTaskForm";
+
 import UpdateTask from "./UpdateTask";
 import { HiDotsVertical } from "react-icons/hi";
+import Swal from "sweetalert2/dist/sweetalert2.js";
+import "sweetalert2/src/sweetalert2.scss";
+import useAxiosSecure from "../../hooks/useAxiosSecure";
 
 const TODO = () => {
-  const { tasks } = useTasks();
+  const { tasks, refetch } = useTasks();
   console.log(tasks);
   const to_do = tasks.filter((t) => t.category === "To-Do");
-  console.log(to_do);
+  const axiosSecure = useAxiosSecure();
+
+  const handleDelete = async (id) => {
+    try {
+      const { data } = await axiosSecure.delete(`/tasks/${id}`);
+
+      if (data.success) {
+        refetch();
+        Swal.fire({
+          title: "Deleted",
+          icon: "success",
+          timer: 1000,
+          showConfirmButton: false,
+        });
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <div>
       <h3 className="text-2xl text-center font-bold mb-4">To-Do</h3>
@@ -27,14 +48,37 @@ const TODO = () => {
                 >
                   {t.category}
                 </span>
-                <button
-                  onClick={() =>
-                    document.getElementById(`${t._id}`).showModal()
-                  }
-                  className="btn btn-sm btn-circle cursor-pointer border-none duration-200"
-                >
-                  <HiDotsVertical />
-                </button>
+                <div className="dropdown dropdown-bottom dropdown-end">
+                  <div
+                    tabIndex={0}
+                    role="button"
+                    className="btn btn-sm btn-circle cursor-pointer border-none duration-200"
+                  >
+                    <HiDotsVertical />
+                  </div>
+                  <ul
+                    tabIndex={0}
+                    className="dropdown-content menu bg-base-100 rounded-box z-[1] w-fit p-2 shadow"
+                  >
+                    <li>
+                      <a
+                        onClick={() =>
+                          document.getElementById(`${t._id}`).showModal()
+                        }
+                      >
+                        Edit
+                      </a>
+                    </li>
+                    <li>
+                      <a
+                        onClick={() => handleDelete(`${t._id}`)}
+                        className="text-red-500"
+                      >
+                        Delete
+                      </a>
+                    </li>
+                  </ul>
+                </div>
                 <dialog id={t._id} className="modal">
                   <UpdateTask
                     task={t}
