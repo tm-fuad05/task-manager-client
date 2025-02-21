@@ -38,13 +38,6 @@ const UpdateTask = ({ task, onClose }) => {
     // Clear any previous errors
     setError("");
 
-    // Reset form
-    setFormData({
-      title: "",
-      description: "",
-      category: task.category,
-    });
-
     try {
       const updatedTaskData = formData;
       const { data } = await axiosSecure.patch(
